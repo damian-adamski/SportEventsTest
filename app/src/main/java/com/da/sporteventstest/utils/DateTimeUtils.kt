@@ -1,8 +1,24 @@
 package com.da.sporteventstest.utils
 
+import java.time.LocalDateTime
 import java.time.Month
 import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+
+fun String.localizeDateAndConvertToOdt(): OffsetDateTime {
+    val localOffset = OffsetDateTime.now().offset
+
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    val instant = LocalDateTime.parse(this, formatter)
+        .atZone(ZoneId.of("UTC"))
+        .toInstant()
+    val formattedOdt = OffsetDateTime.ofInstant(instant, ZoneOffset.UTC)
+
+    return formattedOdt.withOffsetSameInstant(localOffset)
+}
 
 fun OffsetDateTime.convertDateToEventsFormattedString(): String {
     val today = OffsetDateTime.now().truncatedTo(ChronoUnit.DAYS)

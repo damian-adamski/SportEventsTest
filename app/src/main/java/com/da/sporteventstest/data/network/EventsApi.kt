@@ -10,5 +10,5 @@ interface EventsApi {
     }
 
     @GET("/getEvents")
-    fun getEvents(): EventDto
+    fun getEvents(): List<EventDto>
 }

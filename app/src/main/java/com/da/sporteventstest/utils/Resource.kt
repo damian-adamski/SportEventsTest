@@ -2,9 +2,9 @@ package com.da.sporteventstest.utils
 
 import java.lang.Exception
 
-sealed interface Resource {
-    data class Loading(val isLoading: Boolean)
-    data class Refreshing(val isRefreshing: Boolean)
-    data class Error(val exception: Exception)
-    data class Success<T>(val data: T)
+sealed class Resource<T> {
+    data class Loading<T>(val isLoading: Boolean): Resource<T>()
+    data class Refreshing<T>(val isRefreshing: Boolean): Resource<T>()
+    data class Error<T>(val exception: Exception): Resource<T>()
+    data class Success<T>(val data: T): Resource<T>()
 }

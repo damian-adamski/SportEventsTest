@@ -4,15 +4,15 @@ import com.google.gson.annotations.SerializedName
 
 data class EventDto (
     @SerializedName("id")
-    var id : String? = null,
+    var id : String,
     @SerializedName("title")
-    var title : String? = null,
+    var title : String,
     @SerializedName("subtitle")
-    var subtitle : String? = null,
+    var subtitle : String,
     @SerializedName("date")
-    var date : String? = null,
+    var date : String,
     @SerializedName("imageUrl")
-    var imageUrl : String? = null,
+    var imageUrl : String,
     @SerializedName("videoUrl")
-    var videoUrl : String? = null
+    var videoUrl : String
 )
