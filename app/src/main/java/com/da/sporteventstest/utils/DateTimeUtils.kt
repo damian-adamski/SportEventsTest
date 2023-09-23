@@ -20,13 +20,23 @@ fun String.localizeDateAndConvertToOdt(): OffsetDateTime {
     return formattedOdt.withOffsetSameInstant(localOffset)
 }
 
+/**
+ * Calculating gap between days to set proper String.
+ * .isEqual() for dates doesn't work as expected, had to parse it to long
+ */
 fun OffsetDateTime.convertDateToEventsFormattedString(): String {
     val today = OffsetDateTime.now().truncatedTo(ChronoUnit.DAYS)
+    val date = this.truncatedTo(ChronoUnit.DAYS)
 
     return when {
-        this.isEqual(today) -> "Today"
-        this.plusDays(1).isEqual(today) -> "Yesterday"
-        this.minusDays(1).isEqual(today) -> "Tomorrow"
+        date.toEpochSecond() == today.toEpochSecond() -> {
+            val hourFormatted = this.hour.reformatToTwoDigits()
+            val minuteFormatted = this.minute.reformatToTwoDigits()
+
+            "Today, $hourFormatted:$minuteFormatted"
+        }
+        date.plusDays(1).toEpochSecond() == today.toEpochSecond() -> "Yesterday"
+        date.minusDays(1).toEpochSecond() == today.toEpochSecond() -> "Tomorrow"
         else -> this.mapToString()
     }
 }
@@ -66,12 +76,12 @@ private fun Long.getWordForDayNumber(): String {
 }
 
 private fun OffsetDateTime.mapToString(): String {
-    return "$dayOfMonth.${month.reformatToTwoDigits()}.$year"
+    return "$dayOfMonth.${month.value.reformatToTwoDigits()}.$year"
 }
 
-private fun Month.reformatToTwoDigits(): String {
-     return when(val value = this.value) {
+private fun Int.reformatToTwoDigits(): String {
+     return when(val value = this) {
          in (1..9) -> "0$value"
-         else -> this.value.toString()
+         else -> this.toString()
      }
 }

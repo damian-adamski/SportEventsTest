@@ -1,6 +1,7 @@
 package com.da.sporteventstest.data.network
 
 import com.da.sporteventstest.data.network.dto.EventDto
+import com.da.sporteventstest.data.network.dto.ScheduleDto
 import retrofit2.http.GET
 
 interface EventsApi {
@@ -10,5 +11,8 @@ interface EventsApi {
     }
 
     @GET("/getEvents")
-    fun getEvents(): List<EventDto>
+    suspend fun getEvents(): List<EventDto>
+
+    @GET("/getSchedule")
+    suspend fun getSchedule(): List<ScheduleDto>
 }

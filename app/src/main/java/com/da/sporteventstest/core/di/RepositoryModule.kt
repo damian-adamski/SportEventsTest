@@ -1,20 +1,22 @@
-package com.da.sporteventstest.data.di
+package com.da.sporteventstest.core.di
 
+import com.da.sporteventstest.data.network.EventsApi
 import com.da.sporteventstest.data.repository.EventsRepositoryImpl
 import com.da.sporteventstest.domain.repository.EventsRepository
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class RepositoryModule {
+object RepositoryModule {
 
-    @Binds
+    @Provides
     @Singleton
-    abstract fun bindEventsRepository(
-        eventsRepositoryImpl: EventsRepositoryImpl
-    ): EventsRepository
+    fun provideEventsRepository(api: EventsApi): EventsRepository {
+        return EventsRepositoryImpl(api)
+    }
 }

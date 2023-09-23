@@ -1,4 +1,4 @@
-package com.da.sporteventstest.ui.theme
+package com.da.sporteventstest.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

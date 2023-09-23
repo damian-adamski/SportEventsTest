@@ -1,8 +1,6 @@
 package com.da.sporteventstest.domain.model
 
-import com.google.gson.annotations.SerializedName
 import java.time.OffsetDateTime
-import java.time.temporal.ChronoUnit
 
 data class Event(
     var title : String,
@@ -11,7 +9,4 @@ data class Event(
     var dateFormatted: String,
     var imageUrl : String,
     var videoUrl : String
-) {
-
-
-}
+)
