@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.da.sporteventstest.ui.theme.SportEventsTestTheme
+import com.da.sporteventstest.presentation.theme.SportEventsTestTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

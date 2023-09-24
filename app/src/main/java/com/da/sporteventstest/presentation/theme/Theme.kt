@@ -1,4 +1,4 @@
-package com.da.sporteventstest.ui.theme
+package com.da.sporteventstest.presentation.theme
 
 import android.app.Activity
 import android.os.Build
