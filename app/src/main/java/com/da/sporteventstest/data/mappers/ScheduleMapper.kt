@@ -1,14 +1,14 @@
 package com.da.sporteventstest.data.mappers
 
 import com.da.sporteventstest.data.network.dto.ScheduleDto
-import com.da.sporteventstest.domain.model.Schedule
+import com.da.sporteventstest.domain.model.PeriodicEvent
 import com.da.sporteventstest.utils.convertDateToScheduleFormattedString
 import com.da.sporteventstest.utils.localizeDateAndConvertToOdt
 
-fun ScheduleDto.mapToDomain(): Schedule {
+fun ScheduleDto.mapToDomain(): PeriodicEvent {
     val date = this.date.localizeDateAndConvertToOdt()
 
-    return Schedule(
+    return PeriodicEvent(
         title = this.title,
         subtitle = this.subtitle,
         date = date,

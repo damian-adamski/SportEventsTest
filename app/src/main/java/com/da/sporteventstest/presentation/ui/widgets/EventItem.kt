@@ -1,5 +1,6 @@
-package com.da.sporteventstest.presentation.eventsPage.widgets
+package com.da.sporteventstest.presentation.ui.widgets
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,17 +22,24 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
 import com.da.sporteventstest.R
 import com.da.sporteventstest.domain.model.Event
-import com.da.sporteventstest.presentation.theme.TextSecondary
+import com.da.sporteventstest.domain.model.PeriodicEvent
+import com.da.sporteventstest.presentation.ui.theme.AppColors
 import java.time.OffsetDateTime
 
 @Composable
 fun EventItem(
     modifier: Modifier = Modifier,
-    event: Event
+    item: Event,
+    onItemClick: (String) -> Unit
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .clickable {
+                item.videoUrl?.let { videoUrl ->
+                    onItemClick(videoUrl)
+                }
+            }
             .then(modifier),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -49,9 +57,9 @@ fun EventItem(
                     .constrainAs(imageRef){
                         start.linkTo(parent.start)
                     },
-                model = event.imageUrl,
+                model = item.imageUrl,
                 contentScale = FixedScale(0.7f),
-                contentDescription = event.title,
+                contentDescription = item.title,
                 placeholder = painterResource(id = R.drawable.placeholder)
             )
 
@@ -63,13 +71,13 @@ fun EventItem(
                     }
             ) {
                 Text(
-                    text = event.title,
+                    text = item.title,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp
                 )
                 Text(
-                    text = event.subtitle,
+                    text = item.subtitle,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp
@@ -81,8 +89,8 @@ fun EventItem(
                         start.linkTo(imageRef.end, 6.dp)
                         bottom.linkTo(imageRef.bottom, 4.dp)
                     },
-                text = event.dateFormatted,
-                color = TextSecondary,
+                text = item.dateFormatted,
+                color = AppColors.TextSecondary,
                 fontWeight = FontWeight.Normal,
                 fontSize = 14.sp
             )
@@ -94,15 +102,18 @@ fun EventItem(
 @Preview(showBackground = true)
 @Composable
 fun EventItemPreview() {
-    val event = Event(
+    val event = PeriodicEvent(
         title = "libero",
         subtitle = "bibendum",
         date = OffsetDateTime.now(),
         dateFormatted = "Tomorrow, 10:30",
         imageUrl = "",
-        videoUrl = "https://duckduckgo.com/?q=neque"
+        videoUrl = null
 
     )
 
-    EventItem(event = event)
+    EventItem(
+        item = event,
+        onItemClick = { }
+    )
 }

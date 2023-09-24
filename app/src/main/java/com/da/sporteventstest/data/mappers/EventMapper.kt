@@ -1,13 +1,13 @@
 package com.da.sporteventstest.data.mappers
 
 import com.da.sporteventstest.data.network.dto.EventDto
-import com.da.sporteventstest.domain.model.Event
+import com.da.sporteventstest.domain.model.StaticEvent
 import com.da.sporteventstest.utils.*
 
-fun EventDto.mapToDomain(): Event {
+fun EventDto.mapToDomain(): StaticEvent {
     val localizedDate = this.date.localizeDateAndConvertToOdt()
 
-    return Event(
+    return StaticEvent(
         title = this.title,
         subtitle = this.subtitle,
         date = localizedDate,
