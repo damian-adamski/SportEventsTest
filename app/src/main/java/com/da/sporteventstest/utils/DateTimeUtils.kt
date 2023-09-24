@@ -51,10 +51,14 @@ fun OffsetDateTime.convertDateToScheduleFormattedString(): String {
     if (today.isAfter(this)) throw IllegalArgumentException()
 
     val daysUntil = ChronoUnit.DAYS.between(today, this)
+    val (hour, minute) = Pair(
+        this.hour.reformatToTwoDigits(),
+        this.minute.reformatToTwoDigits()
+    )
 
     return when(daysUntil) {
-        0L -> "Today, ${this.hour}:${this.minute}"
-        1L -> "Tomorrow, ${this.hour}:${this.minute}"
+        0L -> "Today, $hour:$minute"
+        1L -> "Tomorrow, $hour:$minute"
         in 2..9 -> "In ${daysUntil.getWordForDayNumber()} days"
         else -> "In ${daysUntil.toInt()} days"
     }

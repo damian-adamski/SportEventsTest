@@ -1,12 +1,12 @@
-package com.da.sporteventstest.domain.model
+package com.da.sporteventstest.domain.model.event
 
 import java.time.OffsetDateTime
 
-data class PeriodicEvent(
+data class StaticEvent(
     override var title : String,
     override var subtitle : String,
     override var date : OffsetDateTime,
     override var dateFormatted: String,
     override var imageUrl : String,
-    override var videoUrl : String? = null
+    override var videoUrl : String?
 ) : Event

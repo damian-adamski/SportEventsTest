@@ -23,10 +23,9 @@ class MainViewModel @Inject constructor(
     private val eventsRepository: EventsRepository
 ) : ViewModel() {
 
-    lateinit var state: MutableState<MainScreenState>
+    var state by mutableStateOf(MainScreenState())
 
     init {
-        state = mutableStateOf(MainScreenState())
         getEvents()
     }
 
@@ -40,10 +39,10 @@ class MainViewModel @Inject constructor(
     }
 
     private fun changePage(page: PageType) {
-        if (state.value.isScheduleEmpty) {
+        if (state.isScheduleEmpty) {
             getSchedulePeriodic()
         }
-        state.value = state.value.copy(
+        state = state.copy(
             pageType = page
         )
     }
@@ -55,19 +54,19 @@ class MainViewModel @Inject constructor(
                 .collect { resource ->
                     when (resource) {
                         is Resource.Loading -> {
-                            state.value = state.value.copy(
+                            state = state.copy(
                                 isLoading = resource.isLoading
                             )
                         }
 
                         is Resource.Error -> {
-                            state.value = state.value.copy(
+                            state = state.copy(
                                 exception = throwException()
                             )
                         }
 
                         is Resource.Success -> {
-                            state.value = state.value.copy(
+                            state = state.copy(
                                 staticEvents = resource.data,
                                 isRefreshing = false
                             )
@@ -85,21 +84,21 @@ class MainViewModel @Inject constructor(
                     .collectLatest { resource ->
                         when (resource) {
                             is Resource.Loading -> {
-                                if (state.value.isScheduleEmpty) {
-                                    state.value = state.value.copy(
+                                if (state.isScheduleEmpty) {
+                                    state = state.copy(
                                         isLoading = resource.isLoading
                                     )
                                 }
                             }
 
                             is Resource.Error -> {
-                                state.value = state.value.copy(
+                                state = state.copy(
                                     exception = throwException()
                                 )
                             }
 
                             is Resource.Success -> {
-                                state.value = state.value.copy(
+                                state = state.copy(
                                     periodicEvents = resource.data,
                                     isLoading = false
                                 )
@@ -112,13 +111,13 @@ class MainViewModel @Inject constructor(
     }
 
     private fun startRefreshing() {
-        state.value = state.value.copy(
+        state = state.copy(
             isRefreshing = true
         )
     }
 
     private fun throwException(): Exception {
-        return when(state.value.pageType) {
+        return when(state.pageType) {
             PageType.Events -> StaticEventsException()
             PageType.Schedule -> PeriodicEventsException()
         }

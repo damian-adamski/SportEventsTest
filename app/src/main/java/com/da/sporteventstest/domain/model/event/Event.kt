@@ -1,4 +1,4 @@
-package com.da.sporteventstest.domain.model
+package com.da.sporteventstest.domain.model.event
 
 import java.time.OffsetDateTime
 

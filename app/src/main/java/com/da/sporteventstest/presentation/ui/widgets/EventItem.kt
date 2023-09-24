@@ -21,8 +21,9 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
 import com.da.sporteventstest.R
-import com.da.sporteventstest.domain.model.Event
-import com.da.sporteventstest.domain.model.PeriodicEvent
+import com.da.sporteventstest.domain.model.event.Event
+import com.da.sporteventstest.domain.model.event.PeriodicEvent
+import com.da.sporteventstest.domain.model.video.VideoItem
 import com.da.sporteventstest.presentation.ui.theme.AppColors
 import java.time.OffsetDateTime
 
@@ -30,14 +31,19 @@ import java.time.OffsetDateTime
 fun EventItem(
     modifier: Modifier = Modifier,
     item: Event,
-    onItemClick: (String) -> Unit
+    onItemClick: (VideoItem) -> Unit
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .clickable {
                 item.videoUrl?.let { videoUrl ->
-                    onItemClick(videoUrl)
+                    val videoItem = VideoItem(
+                        url = videoUrl,
+                        title = item.title,
+                        subtitle = item.subtitle
+                    )
+                    onItemClick(videoItem)
                 }
             }
             .then(modifier),

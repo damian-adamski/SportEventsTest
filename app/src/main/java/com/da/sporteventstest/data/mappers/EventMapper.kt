@@ -1,7 +1,7 @@
 package com.da.sporteventstest.data.mappers
 
 import com.da.sporteventstest.data.network.dto.EventDto
-import com.da.sporteventstest.domain.model.StaticEvent
+import com.da.sporteventstest.domain.model.event.StaticEvent
 import com.da.sporteventstest.utils.*
 
 fun EventDto.mapToDomain(): StaticEvent {

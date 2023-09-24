@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -14,20 +16,28 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.da.sporteventstest.domain.model.Event
+import com.da.sporteventstest.domain.model.event.Event
+import com.da.sporteventstest.domain.model.video.VideoItem
+import com.da.sporteventstest.presentation.destinations.PlayerScreenDestination
 import com.da.sporteventstest.presentation.ui.bottomBarPadding
 import com.da.sporteventstest.presentation.ui.conditional
 import com.da.sporteventstest.presentation.ui.screens.LoadingScreen
 import com.da.sporteventstest.presentation.ui.widgets.EventItem
 import com.da.sporteventstest.presentation.ui.theme.AppColors
 import com.da.sporteventstest.presentation.ui.widgets.MainBottomBar
+import com.da.sporteventstest.presentation.ui.widgets.PullToRefreshItem
 import com.da.sporteventstest.utils.PageType
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
@@ -38,7 +48,7 @@ fun MainScreen(
     navigator: DestinationsNavigator,
     viewModel: MainViewModel = hiltViewModel()
 ) {
-    val state = viewModel.state.value
+    val state = viewModel.state
 
     val events = when (state.pageType) {
         PageType.Events -> state.staticEvents
@@ -61,13 +71,18 @@ fun MainScreen(
         }
     ) {
 
-        Box(modifier = Modifier.bottomBarPadding()) {
+        Box(modifier = Modifier
+            .bottomBarPadding()
+        ) {
             when {
                 state.isLoading -> LoadingScreen()
                 else -> ScreenContent(
                     events = events,
                     isStaticDisplay = state.isStaticEvents,
-                    pullRefreshState = pullRefreshState
+                    pullRefreshState = pullRefreshState,
+                    onStaticItemClick = { videoItem ->
+                        navigator.navigate(PlayerScreenDestination(videoItem))
+                    }
                 )
             }
         }
@@ -81,7 +96,16 @@ private fun ScreenContent(
     events: List<Event>,
     isStaticDisplay: Boolean,
     pullRefreshState: PullRefreshState,
+    onStaticItemClick: (VideoItem) -> Unit
 ) {
+    val lazyColumnState = rememberLazyListState()
+
+    SideEffect {
+        CoroutineScope(Dispatchers.Main).launch {
+            lazyColumnState.scrollToItem(1, 0)
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -92,9 +116,14 @@ private fun ScreenContent(
     ) {
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize(),
+            state = lazyColumnState
         ) {
             val size = events.size
+
+            if (isStaticDisplay) {
+                item { PullToRefreshItem() }
+            }
 
             items(size) {
                 val item = events[it]
@@ -102,8 +131,8 @@ private fun ScreenContent(
                     modifier = Modifier
                         .padding(top = 2.dp),
                     item = item,
-                    onItemClick = { videoUrl ->
-                        // TODO navigate to video player screen
+                    onItemClick = { videoItem ->
+                        onStaticItemClick(videoItem)
                     }
                 )
                 if (it < size) {
@@ -116,5 +145,6 @@ private fun ScreenContent(
                 }
             }
         }
+        PullRefreshIndicator(isStaticDisplay, pullRefreshState, Modifier.align(Alignment.TopCenter))
     }
 }

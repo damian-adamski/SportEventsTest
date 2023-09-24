@@ -1,7 +1,7 @@
 package com.da.sporteventstest.data.mappers
 
 import com.da.sporteventstest.data.network.dto.ScheduleDto
-import com.da.sporteventstest.domain.model.PeriodicEvent
+import com.da.sporteventstest.domain.model.event.PeriodicEvent
 import com.da.sporteventstest.utils.convertDateToScheduleFormattedString
 import com.da.sporteventstest.utils.localizeDateAndConvertToOdt
 
