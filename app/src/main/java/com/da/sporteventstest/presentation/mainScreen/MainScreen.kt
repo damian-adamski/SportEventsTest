@@ -1,6 +1,7 @@
 package com.da.sporteventstest.presentation.mainScreen
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,19 +17,23 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.da.sporteventstest.domain.model.event.Event
 import com.da.sporteventstest.domain.model.video.VideoItem
 import com.da.sporteventstest.presentation.destinations.PlayerScreenDestination
 import com.da.sporteventstest.presentation.ui.bottomBarPadding
 import com.da.sporteventstest.presentation.ui.conditional
 import com.da.sporteventstest.presentation.ui.screens.LoadingScreen
-import com.da.sporteventstest.presentation.ui.widgets.EventItem
 import com.da.sporteventstest.presentation.ui.theme.AppColors
+import com.da.sporteventstest.presentation.ui.widgets.EventItem
 import com.da.sporteventstest.presentation.ui.widgets.MainBottomBar
 import com.da.sporteventstest.presentation.ui.widgets.PullToRefreshItem
 import com.da.sporteventstest.utils.PageType
@@ -50,6 +55,8 @@ fun MainScreen(
 ) {
     val state = viewModel.state
 
+    val lifecycleOwner = LocalLifecycleOwner.current
+
     val events = when (state.pageType) {
         PageType.Events -> state.staticEvents
         PageType.Schedule -> state.periodicEvents
@@ -59,6 +66,25 @@ fun MainScreen(
         refreshing = state.isLoading,
         onRefresh = { viewModel.onAction(MainAction.RefreshStaticEvents) }
     )
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when(event) {
+                Lifecycle.Event.ON_START -> {
+                    Log.wtf("lifecycle owner action", "STARTED")
+                    viewModel.onAction(MainAction.StartPeriodicJob) }
+                Lifecycle.Event.ON_STOP -> {
+                    Log.wtf("lifecycle owner action", "STOPPED")
+                    viewModel.onAction(MainAction.StopPeriodicJob) }
+                else -> Unit
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     Scaffold(
         bottomBar = {
